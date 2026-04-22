@@ -12,3 +12,5 @@ test_folder/
 **toast.py
 db_connection.py
 *.db
+*.db-shm
+*.db-wal
