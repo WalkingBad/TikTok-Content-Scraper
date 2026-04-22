@@ -21,10 +21,17 @@ class TT_Content_Scraper(ObjectTracker):
                 output_files_fp = "data/",
                 progress_file_fn = "progress_tracking/scraping_progress.db",
                 clear_console = False,
-                browser_name = None):
-        
+                browser_name = None,
+                proxy = None,
+    ):
         # initialize object tracker (database of pending and finished objects (ids))
         super().__init__(progress_file_fn)
+
+        if browser_name:
+            base_scraper.set_browser(browser_name)
+
+        if proxy:
+            base_scraper.set_proxy(proxy)
 
         # create output folder if doesnt exist
         Path(output_files_fp).mkdir(parents=True, exist_ok=True)
@@ -113,7 +120,7 @@ class TT_Content_Scraper(ObjectTracker):
                 binaries : dict = base_scraper.scrape_binaries(link_to_binaries)
             except ConnectionError as e:
                 logger.warning(f"ID {id} did not lead to any downloadable files - KeyError {e}")
-                self.mark_error(id=id)
+                self.mark_error(id, str(e))
                 self.n_errors_total += 1
                 self.n_pending -= 1
                 return None
